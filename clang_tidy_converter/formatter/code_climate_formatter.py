@@ -18,7 +18,7 @@ class CodeClimateFormatter:
         else:
             return ''.join(json.dumps(self._format_message(msg, args), indent=2) + '\0\n' for msg in messages)
 
-    def _format_message(self, message, args):
+    def _format_message(self, message, args, fatal_checks: list[str] | None = None):
         return {
             'type': 'issue',
             'check_name': message.diagnostic_name,
@@ -27,7 +27,7 @@ class CodeClimateFormatter:
             'categories': self._extract_categories(message, args),
             'location': self._extract_location(message, args),
             'trace': self._extract_trace(message, args),
-            'severity': self._extract_severity(message, args),
+            'severity': self._extract_severity(message, args, fatal_checks),
             'fingerprint': self._generate_fingerprint(message)
         }
 
@@ -116,7 +116,18 @@ class CodeClimateFormatter:
             }
         return location
 
-    def _extract_severity(self, message, args):
+    def _is_fatal(self, message: ClangMessage,
+                  fatal_checks: list[str] | None = None) -> bool:
+        ret: bool = False
+        for check in fatal_checks or []:
+            if message.diagnostic_name.startswith(check):
+                ret = True
+                break
+        return ret
+
+    def _extract_severity(self, message, args, fatal_checks: list[str] | None = None):
+        if self._is_fatal(message, fatal_checks):
+            return 'blocker'
         if message.level == ClangMessage.Level.NOTE:
             return 'info'
         if message.level == ClangMessage.Level.REMARK:
