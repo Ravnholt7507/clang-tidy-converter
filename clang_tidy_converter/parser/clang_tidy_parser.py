@@ -37,7 +37,7 @@ class ClangMessage:
         return ClangMessage.Level.UNKNOWN
 
 class ClangTidyParser:
-    MESSAGE_REGEX = re.compile(r"^(?P<filepath>.+):(?P<line>\d+):(?P<column>\d+): (?P<level>\S+): (?P<message>.*?)( \[(?P<diagnostic_name>.*)\])?$")
+    MESSAGE_REGEX = re.compile(r"^(?P<filepath>.+):(?P<line>\d+):(?P<column>\d+): (?P<level>\S+): (?P<message>.*?)( \[(?P<diagnostic_name>[^]]*)])?$")
     IGNORE_REGEX = re.compile(r"^error:.*$")
 
     def __init__(self):
