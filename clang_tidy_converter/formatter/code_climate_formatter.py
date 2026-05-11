@@ -147,7 +147,6 @@ class CodeClimateFormatter:
     def _generate_fingerprint(self, message):
         h = hashlib.md5()
         h.update(message.filepath.encode('utf8'))
-        h.update(str(message.line).encode('utf8'))
         h.update(str(message.column).encode('utf8'))
         h.update(message.message.encode('utf8'))
         h.update(message.diagnostic_name.encode('utf8'))
