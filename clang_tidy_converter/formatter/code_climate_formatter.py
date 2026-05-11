@@ -5,8 +5,13 @@ import hashlib
 
 from ..parser import ClangMessage
 
-def remove_duplicates(l):
-    return list(set(l))
+def remove_duplicates(lst: list[str]) -> list[str]:
+    '''
+    Remove duplicates from the list while preserving the order of the elements
+
+    Needs at least Python3.7 to work as the standard dict was not ordered prior to this.
+    '''
+    return list(dict.fromkeys(lst))
 
 class CodeClimateFormatter:
     def __init__(self):
